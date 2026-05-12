@@ -1,15 +1,21 @@
+import { KEYS } from '../constants/storageKeys';
 import INITIAL_RECIPES from '../data/recipes.json';
 
-const KEY = 'cooking_recipes';
+// Increment when seed recipe data changes (triggers migration of default recipes)
+const RECIPE_VERSION = 3;
 
 export function initRecipes() {
-  if (!localStorage.getItem(KEY)) {
-    localStorage.setItem(KEY, JSON.stringify(INITIAL_RECIPES));
+  const storedVer = Number(localStorage.getItem(KEYS.RECIPES_VER) || '0');
+  if (!localStorage.getItem(KEYS.RECIPES) || storedVer < RECIPE_VERSION) {
+    const existing = getRecipes();
+    const userRecipes = existing.filter(r => r.createdBy !== null);
+    localStorage.setItem(KEYS.RECIPES, JSON.stringify([...INITIAL_RECIPES, ...userRecipes]));
+    localStorage.setItem(KEYS.RECIPES_VER, String(RECIPE_VERSION));
   }
 }
 
 export function getRecipes() {
-  const raw = localStorage.getItem(KEY);
+  const raw = localStorage.getItem(KEYS.RECIPES);
   return raw ? JSON.parse(raw) : [];
 }
 
@@ -26,12 +32,12 @@ export function saveRecipe(recipe) {
   } else {
     recipes.push({ ...recipe, createdAt: now, updatedAt: now });
   }
-  localStorage.setItem(KEY, JSON.stringify(recipes));
+  localStorage.setItem(KEYS.RECIPES, JSON.stringify(recipes));
 }
 
 export function deleteRecipe(id) {
   const recipes = getRecipes().filter(r => r.id !== id);
-  localStorage.setItem(KEY, JSON.stringify(recipes));
+  localStorage.setItem(KEYS.RECIPES, JSON.stringify(recipes));
 }
 
 export function getUserRecipes(userId) {

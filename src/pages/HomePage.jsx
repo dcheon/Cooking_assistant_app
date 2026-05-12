@@ -1,15 +1,14 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { getRecipes } from '../services/recipeStore';
+import useRecipeStore from '../store/useRecipeStore';
 import RecipeCard from '../components/RecipeCard';
 import { TAGS } from '../constants/tags';
 
 export default function HomePage() {
-  const [search, setSearch] = useState('');
+  const [search, setSearch]     = useState('');
   const [activeTag, setActiveTag] = useState(null);
-  const [tick, setTick] = useState(0); // force re-render after favorite toggle
 
-  const allRecipes = useMemo(() => getRecipes(), [tick]);
+  const allRecipes = useRecipeStore(s => s.recipes);
 
   const filtered = useMemo(() => {
     let list = allRecipes;
@@ -26,7 +25,6 @@ export default function HomePage() {
     return list;
   }, [allRecipes, search, activeTag]);
 
-  // Only show tags that have at least one recipe
   const usedTags = useMemo(() => {
     const used = new Set(allRecipes.flatMap(r => r.tags ?? []));
     return TAGS.filter(t => used.has(t.value));
@@ -92,11 +90,7 @@ export default function HomePage() {
       {filtered.length > 0 ? (
         <div className="grid gap-4">
           {filtered.map(recipe => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              onFavoriteChange={() => setTick(t => t + 1)}
-            />
+            <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       ) : (

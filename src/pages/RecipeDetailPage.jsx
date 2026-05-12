@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getRecipe, deleteRecipe } from '../services/recipeStore';
-import { toggleFavorite, isFavorite } from '../services/auth';
+import { getRecipe } from '../services/recipeStore';
 import { useAuth } from '../context/AuthContext';
+import useRecipeStore from '../store/useRecipeStore';
 import TagBadge from '../components/TagBadge';
 
 export default function RecipeDetailPage() {
@@ -10,7 +9,11 @@ export default function RecipeDetailPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const recipe = getRecipe(id);
-  const [fav, setFav] = useState(() => isFavorite(user.id, id));
+
+  const favoriteIds    = useRecipeStore(s => s.favoriteIds);
+  const toggleFavorite = useRecipeStore(s => s.toggleFavorite);
+  const deleteRecipe   = useRecipeStore(s => s.deleteRecipe);
+  const isFav = favoriteIds.includes(id);
 
   if (!recipe) {
     return (
@@ -24,11 +27,6 @@ export default function RecipeDetailPage() {
 
   const steps = [...recipe.steps].sort((a, b) => a.order - b.order);
   const isOwner = recipe.createdBy === user.id;
-
-  function handleFav() {
-    const nowFav = toggleFavorite(user.id, recipe.id);
-    setFav(nowFav);
-  }
 
   function handleDelete() {
     if (confirm(`"${recipe.title}" 레시피를 삭제할까요?`)) {
@@ -55,12 +53,12 @@ export default function RecipeDetailPage() {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
-            onClick={handleFav}
+            onClick={() => toggleFavorite(user.id, id)}
             className={`text-2xl transition-transform active:scale-90 ${
-              fav ? 'text-red-500' : 'text-gray-300 hover:text-red-400'
+              isFav ? 'text-red-500' : 'text-gray-300 hover:text-red-400'
             }`}
           >
-            {fav ? '♥' : '♡'}
+            {isFav ? '♥' : '♡'}
           </button>
           {isOwner && (
             <>
@@ -119,7 +117,16 @@ export default function RecipeDetailPage() {
               <span className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-700 font-bold text-sm flex items-center justify-center">
                 {i + 1}
               </span>
-              <p className="text-gray-700 leading-relaxed pt-0.5">{step.instruction}</p>
+              <div className="pt-0.5">
+                <p className="text-gray-700 leading-relaxed">{step.instruction}</p>
+                {step.timerSeconds && (
+                  <span className="inline-block mt-1 text-xs text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">
+                    ⏱ {step.timerSeconds >= 60
+                      ? `${Math.floor(step.timerSeconds / 60)}분${step.timerSeconds % 60 ? ` ${step.timerSeconds % 60}초` : ''}`
+                      : `${step.timerSeconds}초`} 타이머
+                  </span>
+                )}
+              </div>
             </li>
           ))}
         </ol>

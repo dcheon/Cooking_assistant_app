@@ -1,18 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { getFavoriteIds } from '../services/auth';
-import { getFavoriteRecipes } from '../services/recipeStore';
+import useRecipeStore from '../store/useRecipeStore';
 import RecipeCard from '../components/RecipeCard';
 
 export default function FavoritesPage() {
-  const { user } = useAuth();
-  const [tick, setTick] = useState(0);
+  const allRecipes = useRecipeStore(s => s.recipes);
+  const favoriteIds = useRecipeStore(s => s.favoriteIds);
 
-  const recipes = useMemo(() => {
-    const ids = getFavoriteIds(user.id);
-    return getFavoriteRecipes(ids);
-  }, [user.id, tick]);
+  const recipes = useMemo(
+    () => allRecipes.filter(r => favoriteIds.includes(r.id)),
+    [allRecipes, favoriteIds]
+  );
 
   return (
     <div className="space-y-5">
@@ -24,11 +22,7 @@ export default function FavoritesPage() {
       {recipes.length > 0 ? (
         <div className="grid gap-4">
           {recipes.map(recipe => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              onFavoriteChange={() => setTick(t => t + 1)}
-            />
+            <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       ) : (

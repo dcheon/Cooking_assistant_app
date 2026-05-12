@@ -7,6 +7,7 @@ const COMMANDS = {
   back:   ['back', '이전', '뒤로'],
   pause:  ['pause', '멈춤', '정지', '일시정지'],
   done:   ['done', '종료', '끝', '완료'],
+  timer:  ['타이머 시작', '타이머', 'timer'],
 };
 
 function parseCommand(text) {

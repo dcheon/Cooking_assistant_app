@@ -1,16 +1,14 @@
+import { KEYS } from '../constants/storageKeys';
 import INITIAL_USERS from '../data/users.json';
 
-const USERS_KEY = 'cooking_users';
-const SESSION_KEY = 'cooking_session';
-
 export function initUsers() {
-  if (!localStorage.getItem(USERS_KEY)) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(INITIAL_USERS));
+  if (!localStorage.getItem(KEYS.USERS)) {
+    localStorage.setItem(KEYS.USERS, JSON.stringify(INITIAL_USERS));
   }
 }
 
 export function getUsers() {
-  const raw = localStorage.getItem(USERS_KEY);
+  const raw = localStorage.getItem(KEYS.USERS);
   return raw ? JSON.parse(raw) : [];
 }
 
@@ -19,7 +17,7 @@ export function getUser(id) {
 }
 
 function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  localStorage.setItem(KEYS.USERS, JSON.stringify(users));
 }
 
 export function login(username, password) {
@@ -27,16 +25,16 @@ export function login(username, password) {
   const user = users.find(u => u.username === username && u.password === password);
   if (!user) return null;
   const session = { id: user.id, username: user.username, displayName: user.displayName };
-  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  localStorage.setItem(KEYS.SESSION, JSON.stringify(session));
   return session;
 }
 
 export function logout() {
-  localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(KEYS.SESSION);
 }
 
 export function getSession() {
-  const raw = localStorage.getItem(SESSION_KEY);
+  const raw = localStorage.getItem(KEYS.SESSION);
   return raw ? JSON.parse(raw) : null;
 }
 
@@ -51,7 +49,7 @@ export function toggleFavorite(userId, recipeId) {
     user.favorites.push(recipeId);
   }
   saveUsers(users);
-  return idx < 0; // returns true if now favorited
+  return idx < 0;
 }
 
 export function isFavorite(userId, recipeId) {

@@ -1,28 +1,44 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getRecipe, saveRecipe, genId, genStepId } from '../services/recipeStore';
+import { getRecipe, genId, genStepId } from '../services/recipeStore';
+import useRecipeStore from '../store/useRecipeStore';
 import { TAGS } from '../constants/tags';
+
+function formatTime(sec) {
+  if (!sec) return '';
+  if (sec >= 60) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return s > 0 ? `${m}분 ${s}초` : `${m}분`;
+  }
+  return `${sec}초`;
+}
 
 export default function CreateRecipePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const saveRecipe = useRecipeStore(s => s.saveRecipe);
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
   const existing = useMemo(() => (editId ? getRecipe(editId) : null), [editId]);
 
-  const [title, setTitle] = useState(existing?.title ?? '');
+  const [title, setTitle]             = useState(existing?.title ?? '');
   const [description, setDescription] = useState(existing?.description ?? '');
-  const [prepTime, setPrepTime] = useState(existing?.prepTime ?? '');
+  const [prepTime, setPrepTime]       = useState(existing?.prepTime ?? '');
   const [selectedTags, setSelectedTags] = useState(existing?.tags ?? []);
   const [ingredients, setIngredients] = useState(
     existing?.ingredients?.length ? existing.ingredients : ['']
   );
-  const [steps, setSteps] = useState(
-    existing?.steps
-      ? [...existing.steps].sort((a, b) => a.order - b.order).map(s => s.instruction)
-      : ['']
-  );
+  // Steps are objects: { instruction, timerSeconds }
+  const [steps, setSteps] = useState(() => {
+    if (existing?.steps?.length) {
+      return [...existing.steps]
+        .sort((a, b) => a.order - b.order)
+        .map(s => ({ instruction: s.instruction, timerSeconds: s.timerSeconds ?? '' }));
+    }
+    return [{ instruction: '', timerSeconds: '' }];
+  });
   const [errors, setErrors] = useState({});
 
   function toggleTag(value) {
@@ -34,9 +50,7 @@ export default function CreateRecipePage() {
   function updateIngredient(i, val) {
     setIngredients(prev => prev.map((v, idx) => (idx === i ? val : v)));
   }
-  function addIngredient() {
-    setIngredients(prev => [...prev, '']);
-  }
+  function addIngredient() { setIngredients(prev => [...prev, '']); }
   function removeIngredient(i) {
     setIngredients(prev => {
       const next = prev.filter((_, idx) => idx !== i);
@@ -44,16 +58,14 @@ export default function CreateRecipePage() {
     });
   }
 
-  function updateStep(i, val) {
-    setSteps(prev => prev.map((v, idx) => (idx === i ? val : v)));
+  function updateStep(i, field, val) {
+    setSteps(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s));
   }
-  function addStep() {
-    setSteps(prev => [...prev, '']);
-  }
+  function addStep() { setSteps(prev => [...prev, { instruction: '', timerSeconds: '' }]); }
   function removeStep(i) {
     setSteps(prev => {
       const next = prev.filter((_, idx) => idx !== i);
-      return next.length ? next : [''];
+      return next.length ? next : [{ instruction: '', timerSeconds: '' }];
     });
   }
 
@@ -61,7 +73,7 @@ export default function CreateRecipePage() {
     const errs = {};
     if (!title.trim()) errs.title = '레시피 이름을 입력해 주세요.';
     if (!ingredients.some(s => s.trim())) errs.ingredients = '재료를 하나 이상 입력해 주세요.';
-    if (!steps.some(s => s.trim())) errs.steps = '조리 단계를 하나 이상 입력해 주세요.';
+    if (!steps.some(s => s.instruction.trim())) errs.steps = '조리 단계를 하나 이상 입력해 주세요.';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -76,11 +88,12 @@ export default function CreateRecipePage() {
       tags: selectedTags,
       ingredients: ingredients.filter(s => s.trim()),
       steps: steps
-        .filter(s => s.trim())
-        .map((instruction, i) => ({
+        .filter(s => s.instruction.trim())
+        .map((s, i) => ({
           id: existing?.steps?.[i]?.id ?? genStepId(),
           order: i + 1,
-          instruction,
+          instruction: s.instruction,
+          ...(s.timerSeconds ? { timerSeconds: Number(s.timerSeconds) } : {}),
         })),
       createdBy: existing?.createdBy ?? user.id,
       isPublic: false,
@@ -167,13 +180,8 @@ export default function CreateRecipePage() {
       <section className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between mb-3">
           <label className="text-sm font-semibold text-gray-600">🥕 재료 *</label>
-          <button
-            type="button"
-            onClick={addIngredient}
-            className="text-sm text-amber-600 hover:text-amber-700 font-medium"
-          >
-            + 추가
-          </button>
+          <button type="button" onClick={addIngredient}
+            className="text-sm text-amber-600 hover:text-amber-700 font-medium">+ 추가</button>
         </div>
         {errors.ingredients && <p className="text-red-500 text-xs mb-2">{errors.ingredients}</p>}
         <div className="space-y-2">
@@ -187,13 +195,8 @@ export default function CreateRecipePage() {
                 className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800
                            placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-200 transition"
               />
-              <button
-                type="button"
-                onClick={() => removeIngredient(i)}
-                className="text-gray-300 hover:text-red-400 transition text-lg px-1"
-              >
-                ✕
-              </button>
+              <button type="button" onClick={() => removeIngredient(i)}
+                className="text-gray-300 hover:text-red-400 transition text-lg px-1">✕</button>
             </div>
           ))}
         </div>
@@ -203,37 +206,43 @@ export default function CreateRecipePage() {
       <section className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between mb-3">
           <label className="text-sm font-semibold text-gray-600">📋 조리 순서 *</label>
-          <button
-            type="button"
-            onClick={addStep}
-            className="text-sm text-amber-600 hover:text-amber-700 font-medium"
-          >
-            + 추가
-          </button>
+          <button type="button" onClick={addStep}
+            className="text-sm text-amber-600 hover:text-amber-700 font-medium">+ 추가</button>
         </div>
         {errors.steps && <p className="text-red-500 text-xs mb-2">{errors.steps}</p>}
         <p className="text-xs text-gray-400 mb-3">💡 단계를 짧고 명확하게 써야 TTS가 자연스럽습니다.</p>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {steps.map((step, i) => (
             <div key={i} className="flex gap-2 items-start">
               <span className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-700 font-bold text-sm flex items-center justify-center mt-2">
                 {i + 1}
               </span>
-              <textarea
-                value={step}
-                onChange={e => updateStep(i, e.target.value)}
-                rows={2}
-                placeholder="예: 팬에 기름을 두르고 중불로 가열하세요."
-                className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800
-                           placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-200 transition resize-none"
-              />
-              <button
-                type="button"
-                onClick={() => removeStep(i)}
-                className="text-gray-300 hover:text-red-400 transition text-lg px-1 mt-2"
-              >
-                ✕
-              </button>
+              <div className="flex-1 space-y-1.5">
+                <textarea
+                  value={step.instruction}
+                  onChange={e => updateStep(i, 'instruction', e.target.value)}
+                  rows={2}
+                  placeholder="예: 팬에 기름을 두르고 중불로 가열하세요."
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800
+                             placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-200 transition resize-none"
+                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={step.timerSeconds}
+                    onChange={e => updateStep(i, 'timerSeconds', e.target.value)}
+                    placeholder="타이머 (초)"
+                    min={1}
+                    className="w-28 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-600
+                               placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-200 transition"
+                  />
+                  <span className="text-xs text-gray-400">
+                    초 타이머{step.timerSeconds ? ` (${formatTime(Number(step.timerSeconds))})` : ''}
+                  </span>
+                </div>
+              </div>
+              <button type="button" onClick={() => removeStep(i)}
+                className="text-gray-300 hover:text-red-400 transition text-lg px-1 mt-2">✕</button>
             </div>
           ))}
         </div>

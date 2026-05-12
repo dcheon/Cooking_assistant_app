@@ -1,19 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { toggleFavorite, isFavorite, getUser } from '../services/auth';
-import { useState } from 'react';
+import useRecipeStore from '../store/useRecipeStore';
 import TagBadge from './TagBadge';
 
-export default function RecipeCard({ recipe, onFavoriteChange }) {
+export default function RecipeCard({ recipe }) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [fav, setFav] = useState(() => isFavorite(user.id, recipe.id));
+  const favoriteIds  = useRecipeStore(s => s.favoriteIds);
+  const toggleFavorite = useRecipeStore(s => s.toggleFavorite);
+  const isFav = favoriteIds.includes(recipe.id);
 
   function handleFav(e) {
     e.stopPropagation();
-    const nowFav = toggleFavorite(user.id, recipe.id);
-    setFav(nowFav);
-    onFavoriteChange?.();
+    toggleFavorite(user.id, recipe.id);
   }
 
   const timeLabel = recipe.prepTime ? `${recipe.prepTime}분` : null;
@@ -32,11 +31,11 @@ export default function RecipeCard({ recipe, onFavoriteChange }) {
         <button
           onClick={handleFav}
           className={`text-xl flex-shrink-0 transition-transform active:scale-90 ${
-            fav ? 'text-red-500' : 'text-gray-300 hover:text-red-400'
+            isFav ? 'text-red-500' : 'text-gray-300 hover:text-red-400'
           }`}
-          aria-label={fav ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+          aria-label={isFav ? '즐겨찾기 해제' : '즐겨찾기 추가'}
         >
-          {fav ? '♥' : '♡'}
+          {isFav ? '♥' : '♡'}
         </button>
       </div>
 

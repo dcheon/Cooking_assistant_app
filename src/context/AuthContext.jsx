@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getSession, initUsers } from '../services/auth';
 import { initRecipes } from '../services/recipeStore';
+import useRecipeStore from '../store/useRecipeStore';
 
 const AuthContext = createContext(null);
 
@@ -11,9 +12,18 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     initUsers();
     initRecipes();
-    setUser(getSession());
+    const session = getSession();
+    setUser(session);
+    useRecipeStore.getState().init(session?.id ?? null);
     setReady(true);
   }, []);
+
+  // Re-sync Zustand favorites whenever the logged-in user changes
+  useEffect(() => {
+    if (ready) {
+      useRecipeStore.getState().init(user?.id ?? null);
+    }
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!ready) return null;
 

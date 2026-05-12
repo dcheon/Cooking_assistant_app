@@ -1,20 +1,19 @@
-import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getUserRecipes, deleteRecipe } from '../services/recipeStore';
+import useRecipeStore from '../store/useRecipeStore';
 import RecipeCard from '../components/RecipeCard';
 
 export default function MyRecipesPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [tick, setTick] = useState(0);
+  const allRecipes   = useRecipeStore(s => s.recipes);
+  const deleteRecipe = useRecipeStore(s => s.deleteRecipe);
 
-  const recipes = useMemo(() => getUserRecipes(user.id), [user.id, tick]);
+  const recipes = allRecipes.filter(r => r.createdBy === user.id);
 
   function handleDelete(recipe) {
     if (confirm(`"${recipe.title}" 레시피를 삭제할까요?`)) {
       deleteRecipe(recipe.id);
-      setTick(t => t + 1);
     }
   }
 
@@ -38,10 +37,7 @@ export default function MyRecipesPage() {
         <div className="grid gap-4">
           {recipes.map(recipe => (
             <div key={recipe.id} className="relative">
-              <RecipeCard
-                recipe={recipe}
-                onFavoriteChange={() => setTick(t => t + 1)}
-              />
+              <RecipeCard recipe={recipe} />
               <div className="flex gap-2 mt-2">
                 <Link
                   to={`/create?edit=${recipe.id}`}
