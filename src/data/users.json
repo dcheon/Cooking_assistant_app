@@ -1,0 +1,11 @@
+[
+  {
+    "id": "user-001",
+    "username": "chef",
+    "password": "1234",
+    "displayName": "요리사",
+    "email": "chef@cooking.app",
+    "favorites": [],
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  }
+]

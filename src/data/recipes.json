@@ -1,0 +1,102 @@
+[
+  {
+    "id": "recipe-001",
+    "title": "김치볶음밥",
+    "description": "고소하고 매콤한 한국식 볶음밥. 남은 밥과 김치로 5분 만에 완성.",
+    "ingredients": ["밥 1공기", "묵은 김치 1/2컵", "식용유 1큰술", "간장 1큰술", "참기름 1작은술", "달걀 1개"],
+    "steps": [
+      { "id": "s001-1", "order": 1, "instruction": "팬에 식용유를 두르고 중불로 가열하세요." },
+      { "id": "s001-2", "order": 2, "instruction": "김치를 넣고 2분간 볶아주세요." },
+      { "id": "s001-3", "order": 3, "instruction": "밥을 넣고 김치와 잘 섞으며 볶아주세요." },
+      { "id": "s001-4", "order": 4, "instruction": "간장과 참기름을 넣고 1분 더 볶아주세요." },
+      { "id": "s001-5", "order": 5, "instruction": "달걀 프라이를 위에 올리면 완성입니다." }
+    ],
+    "tags": ["korean", "spicy", "quick"],
+    "difficulty": "easy",
+    "prepTime": 15,
+    "createdBy": null,
+    "isPublic": true,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "recipe-002",
+    "title": "계란말이",
+    "description": "폭신하고 고소한 일본식 계란말이. 도시락 반찬으로도 완벽.",
+    "ingredients": ["달걀 3개", "당근 1/4개", "파 1/4대", "소금 약간", "식용유 1작은술"],
+    "steps": [
+      { "id": "s002-1", "order": 1, "instruction": "달걀 3개를 풀고 소금을 약간 넣어 잘 섞어주세요." },
+      { "id": "s002-2", "order": 2, "instruction": "당근과 파를 잘게 썰어 달걀물에 넣어주세요." },
+      { "id": "s002-3", "order": 3, "instruction": "팬에 식용유를 살짝 두르고 중약불로 달궈주세요." },
+      { "id": "s002-4", "order": 4, "instruction": "달걀물 절반을 붓고 반쯤 익으면 천천히 한쪽에서 말아주세요." },
+      { "id": "s002-5", "order": 5, "instruction": "남은 달걀물을 붓고 앞에 만 것과 함께 다시 말아주세요." },
+      { "id": "s002-6", "order": 6, "instruction": "약불에서 2분 더 익힌 뒤 꺼내 한 김 식히면 완성입니다." }
+    ],
+    "tags": ["korean", "japanese", "quick"],
+    "difficulty": "easy",
+    "prepTime": 15,
+    "createdBy": null,
+    "isPublic": true,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "recipe-003",
+    "title": "라면",
+    "description": "언제 먹어도 맛있는 국민 간식. 5분이면 완성.",
+    "ingredients": ["라면 1봉지 (스프 포함)", "물 550ml", "달걀 1개 (선택)", "파 약간 (선택)"],
+    "steps": [
+      { "id": "s003-1", "order": 1, "instruction": "냄비에 물 550ml를 붓고 강불로 끓여주세요." },
+      { "id": "s003-2", "order": 2, "instruction": "물이 끓으면 면과 스프, 건더기를 모두 넣어주세요." },
+      { "id": "s003-3", "order": 3, "instruction": "중강불에서 3분간 면을 풀어가며 끓여주세요." },
+      { "id": "s003-4", "order": 4, "instruction": "달걀을 넣고 1분 더 끓이면 완성입니다." }
+    ],
+    "tags": ["korean", "spicy", "quick"],
+    "difficulty": "easy",
+    "prepTime": 5,
+    "createdBy": null,
+    "isPublic": true,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "recipe-004",
+    "title": "토마토 파스타",
+    "description": "간단하지만 진하고 깊은 맛의 이탈리안 토마토 파스타.",
+    "ingredients": ["파스타 면 100g", "토마토 소스 1/2캔 (200g)", "마늘 3쪽", "올리브유 2큰술", "소금·후추 약간", "바질 잎 (선택)"],
+    "steps": [
+      { "id": "s004-1", "order": 1, "instruction": "끓는 소금물에 파스타 면을 넣고 패키지 지시대로 삶아주세요." },
+      { "id": "s004-2", "order": 2, "instruction": "팬에 올리브유를 두르고 얇게 슬라이스한 마늘을 중약불에서 향이 날 때까지 볶아주세요." },
+      { "id": "s004-3", "order": 3, "instruction": "토마토 소스를 넣고 5분간 졸여주세요." },
+      { "id": "s004-4", "order": 4, "instruction": "삶은 면을 건져 소스 팬에 넣고 잘 버무려주세요." },
+      { "id": "s004-5", "order": 5, "instruction": "소금과 후추로 간을 맞추고 바질을 올리면 완성입니다." }
+    ],
+    "tags": ["italian", "quick"],
+    "difficulty": "easy",
+    "prepTime": 20,
+    "createdBy": null,
+    "isPublic": true,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "recipe-005",
+    "title": "야채 볶음",
+    "description": "냉장고 속 야채를 활용한 건강하고 간단한 채식 볶음.",
+    "ingredients": ["애호박 1/2개", "당근 1/4개", "양파 1/2개", "버섯 50g", "간장 1큰술", "참기름 1작은술", "식용유"],
+    "steps": [
+      { "id": "s005-1", "order": 1, "instruction": "모든 야채를 먹기 좋은 크기로 썰어주세요." },
+      { "id": "s005-2", "order": 2, "instruction": "팬에 식용유를 두르고 센불로 달궈주세요." },
+      { "id": "s005-3", "order": 3, "instruction": "당근과 양파를 먼저 2분간 볶아주세요." },
+      { "id": "s005-4", "order": 4, "instruction": "애호박과 버섯을 넣고 2분 더 볶아주세요." },
+      { "id": "s005-5", "order": 5, "instruction": "간장과 참기름으로 간을 맞추면 완성입니다." }
+    ],
+    "tags": ["korean", "vegetarian", "quick"],
+    "difficulty": "easy",
+    "prepTime": 15,
+    "createdBy": null,
+    "isPublic": true,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  }
+]
