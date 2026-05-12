@@ -13,7 +13,8 @@
       "PowerShell($paths = $env:PATH -split ';'; $paths | Where-Object { $_ -ne '' } | ForEach-Object { $_ })",
       "PowerShell(choco list --local-only 2>$null | Select-String \"node\"; ls \"C:\\\\ProgramData\\\\chocolatey\\\\bin\" | Where-Object { $_.Name -match \"node|npm\" })",
       "PowerShell(ls \"C:\\\\msys64\\\\ucrt64\\\\bin\" | Where-Object { $_.Name -match \"node|npm\" })",
-      "PowerShell(Get-ChildItem \"c:\\\\projects\\\\cooking\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object FullName)"
+      "PowerShell(Get-ChildItem \"c:\\\\projects\\\\cooking\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object FullName)",
+      "PowerShell(Get-ChildItem \"c:\\\\projects\\\\cooking\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object @{N='Path';E={$_.FullName.Replace\\('C:\\\\projects\\\\cooking\\\\',''\\)}} | Sort-Object Path | Format-Table -AutoSize)"
     ]
   }
 }
