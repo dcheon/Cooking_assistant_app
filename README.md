@@ -31,7 +31,7 @@
 ### 기본 계정
 
 | 항목 | 값 |
-|---|---|
+|:---|:---|
 | 아이디 | `chef` |
 | 비밀번호 | `1234` |
 
@@ -129,7 +129,7 @@ cooking/
 ### 상태 관리 전략
 
 | 상태 종류 | 관리 방법 | 이유 |
-|---|---|---|
+|:---|:---|:---|
 | 로그인 세션 | `AuthContext` (React Context) | 앱 전체에서 공유 |
 | 레시피 목록 | 각 페이지의 `useState` + 서비스 직접 호출 | 글로벌 상태 불필요 |
 | 요리 모드 진행 상태 | `useState` + `useRef` (혼합) | 비동기 콜백의 클로저 문제 해결 |
@@ -191,7 +191,7 @@ startListening((cmd) => handleCommandRef.current(cmd), onError);
   ],
   "tags": ["korean", "spicy", "quick"],
   "difficulty": "easy",
-  "prepTime": 15,
+  "prepTime": 15,           // 단위: 분(minutes)
   "createdBy": null,
   "isPublic": true,
   "createdAt": "2026-01-01T00:00:00.000Z",
@@ -220,7 +220,7 @@ startListening((cmd) => handleCommandRef.current(cmd), onError);
 ### localStorage 키
 
 | 키 | 내용 |
-|---|---|
+|:---|:---|
 | `cooking_recipes` | 모든 레시피 배열 (기본 + 사용자 생성) |
 | `cooking_users` | 사용자 배열 (즐겨찾기 포함) |
 | `cooking_session` | 현재 로그인 세션 `{ id, username, displayName }` |
@@ -232,7 +232,7 @@ startListening((cmd) => handleCommandRef.current(cmd), onError);
 `src/constants/tags.js`에 13개 태그가 정의되어 있습니다.
 
 | 값 | 레이블 | 색상 |
-|---|---|---|
+|:---|:---|:---|
 | `korean` | 한식 | 빨강 |
 | `japanese` | 일식 | 핑크 |
 | `italian` | 이탈리안 | 초록 |
@@ -276,7 +276,7 @@ startListening((cmd) => handleCommandRef.current(cmd), onError);
 ### 2. 음성 명령
 
 | 명령어 | 한국어 동의어 | 동작 |
-|---|---|---|
+|:---|:---|:---|
 | `next` | 다음, 넥스트 | 다음 단계로 이동 |
 | `back` | 이전, 뒤로 | 이전 단계로 이동 |
 | `repeat` | 다시, 반복 | 현재 단계 재읽기 |
@@ -309,7 +309,7 @@ startListening((cmd) => handleCommandRef.current(cmd), onError);
 ## 기술 스택
 
 | 역할 | 기술 | 버전 |
-|---|---|---|
+|:---|:---|:---|
 | UI 프레임워크 | React | 18.3 |
 | 빌드 도구 | Vite | 5.4 |
 | 라우팅 | React Router DOM (HashRouter) | 6.26 |
@@ -326,7 +326,7 @@ startListening((cmd) => handleCommandRef.current(cmd), onError);
 ## 브라우저 지원
 
 | 기능 | Chrome | Edge | Firefox | Safari |
-|---|---|---|---|---|
+|:---|:---:|:---:|:---:|:---:|
 | TTS (SpeechSynthesis) | ✅ | ✅ | ✅ | ✅ |
 | 음성 인식 (SpeechRecognition) | ✅ | ✅ | ❌ | ❌ |
 | 전체 앱 동작 | ✅ | ✅ | ⚠️ 버튼 폴백 | ⚠️ 버튼 폴백 |
@@ -340,7 +340,7 @@ startListening((cmd) => handleCommandRef.current(cmd), onError);
 ### 현재 제한사항
 
 | 항목 | 내용 |
-|---|---|
+|:---|:---|
 | **보안** | 비밀번호가 localStorage에 평문 저장됨. 개인 기기 전용 MVP |
 | **다중 사용자** | 현재 1명의 기본 사용자만 포함. 회원가입 기능 없음 |
 | **데이터 동기화** | 기기 간 데이터 공유 불가 (localStorage 한계) |
