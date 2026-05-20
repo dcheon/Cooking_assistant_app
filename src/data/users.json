@@ -2,7 +2,7 @@
   {
     "id": "user-001",
     "username": "chef",
-    "password": "1234",
+    "password": "$2b$10$70jh8DfnW8iiUHElXra5a.ZoJAN6Smfe//dwpPWtWMCrk58HulH3u",
     "displayName": "요리사",
     "email": "chef@cooking.app",
     "favorites": [],

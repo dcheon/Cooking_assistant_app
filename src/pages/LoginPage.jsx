@@ -11,17 +11,17 @@ export default function LoginPage() {
   const { setUser } = useAuth();
   const navigate = useNavigate();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const session = login(username.trim(), password);
+    const { data: session, error: loginError } = await login(username.trim(), password);
     setLoading(false);
     if (session) {
       setUser(session);
       navigate('/');
     } else {
-      setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+      setError(loginError ?? '로그인에 실패했습니다.');
     }
   }
 

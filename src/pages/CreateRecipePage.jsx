@@ -21,7 +21,7 @@ export default function CreateRecipePage() {
   const saveRecipe = useRecipeStore(s => s.saveRecipe);
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
-  const existing = useMemo(() => (editId ? getRecipe(editId) : null), [editId]);
+  const existing = useMemo(() => (editId ? getRecipe(editId).data : null), [editId]);
 
   const [title, setTitle]             = useState(existing?.title ?? '');
   const [description, setDescription] = useState(existing?.description ?? '');

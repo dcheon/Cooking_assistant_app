@@ -8,7 +8,7 @@ export default function RecipeDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const recipe = getRecipe(id);
+  const { data: recipe } = getRecipe(id);
 
   const favoriteIds    = useRecipeStore(s => s.favoriteIds);
   const toggleFavorite = useRecipeStore(s => s.toggleFavorite);

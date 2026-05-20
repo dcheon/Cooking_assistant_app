@@ -13,25 +13,24 @@ const useRecipeStore = create((set) => ({
   recipes:     [],
   favoriteIds: [],
 
-  // Call after login/logout or on app start
   init: (userId) => set({
-    recipes:     getRecipes(),
-    favoriteIds: userId ? getFavoriteIds(userId) : [],
+    recipes:     getRecipes().data,
+    favoriteIds: userId ? getFavoriteIds(userId).data : [],
   }),
 
   saveRecipe: (recipe) => {
     svcSave(recipe);
-    set({ recipes: getRecipes() });
+    set({ recipes: getRecipes().data });
   },
 
   deleteRecipe: (id) => {
     svcDelete(id);
-    set({ recipes: getRecipes() });
+    set({ recipes: getRecipes().data });
   },
 
   toggleFavorite: (userId, recipeId) => {
     svcToggleFavorite(userId, recipeId);
-    set({ favoriteIds: getFavoriteIds(userId) });
+    set({ favoriteIds: getFavoriteIds(userId).data });
   },
 }));
 

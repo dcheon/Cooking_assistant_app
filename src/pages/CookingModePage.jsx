@@ -26,7 +26,7 @@ function formatTime(sec) {
 export default function CookingModePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const recipe = useMemo(() => getRecipe(id), [id]);
+  const recipe = useMemo(() => getRecipe(id).data, [id]);
   const steps  = useMemo(
     () => recipe ? [...recipe.steps].sort((a, b) => a.order - b.order) : [],
     [recipe]
