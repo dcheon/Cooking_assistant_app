@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import NavBar from './components/NavBar';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import SettingsPage from './pages/SettingsPage';
 import HomePage from './pages/HomePage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import CookingModePage from './pages/CookingModePage';
@@ -21,7 +23,9 @@ function AppRoutes() {
       {user && <NavBar />}
       <main className="max-w-2xl mx-auto px-4 py-6 fade-in">
         <Routes>
-          <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+          <Route path="/login"    element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+          <Route path="/signup"   element={user ? <Navigate to="/" replace /> : <SignupPage />} />
+          <Route path="/settings" element={<Guard><SettingsPage /></Guard>} />
           <Route path="/"            element={<Guard><HomePage /></Guard>} />
           <Route path="/recipe/:id"  element={<Guard><RecipeDetailPage /></Guard>} />
           <Route path="/cook/:id"    element={<Guard><CookingModePage /></Guard>} />

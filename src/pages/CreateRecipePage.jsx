@@ -39,6 +39,7 @@ export default function CreateRecipePage() {
     }
     return [{ instruction: '', timerSeconds: '' }];
   });
+  const [imageBase64, setImageBase64] = useState(existing?.imageBase64 ?? null);
   const [errors, setErrors] = useState({});
 
   function toggleTag(value) {
@@ -69,6 +70,19 @@ export default function CreateRecipePage() {
     });
   }
 
+  function handleImageFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert('이미지 크기는 2MB 이하여야 합니다.');
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => setImageBase64(ev.target.result);
+    reader.readAsDataURL(file);
+  }
+
   function validate() {
     const errs = {};
     if (!title.trim()) errs.title = '레시피 이름을 입력해 주세요.';
@@ -95,6 +109,7 @@ export default function CreateRecipePage() {
           instruction: s.instruction,
           ...(s.timerSeconds ? { timerSeconds: Number(s.timerSeconds) } : {}),
         })),
+      imageBase64: imageBase64 ?? null,
       createdBy: existing?.createdBy ?? user.id,
       isPublic: false,
     };
@@ -153,6 +168,40 @@ export default function CreateRecipePage() {
                        focus:outline-none focus:ring-2 focus:ring-amber-300 transition"
           />
         </div>
+      </section>
+
+      {/* Image upload */}
+      <section className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+        <label className="block text-sm font-semibold text-gray-600 mb-3">📷 대표 이미지 (선택, 최대 2MB)</label>
+        {imageBase64 ? (
+          <div className="relative">
+            <img
+              src={imageBase64}
+              alt="미리보기"
+              className="w-full h-48 object-cover rounded-xl"
+            />
+            <button
+              type="button"
+              onClick={() => setImageBase64(null)}
+              className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-lg
+                         hover:bg-black/70 transition"
+            >
+              ✕ 제거
+            </button>
+          </div>
+        ) : (
+          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed
+                            border-gray-200 rounded-xl cursor-pointer hover:border-amber-300 transition">
+            <span className="text-3xl mb-1">📷</span>
+            <span className="text-sm text-gray-400">클릭하여 이미지 선택</span>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageFile}
+              className="hidden"
+            />
+          </label>
+        )}
       </section>
 
       {/* Tags */}

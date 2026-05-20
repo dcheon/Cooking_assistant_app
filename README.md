@@ -14,13 +14,14 @@
 - [핵심 기능 분석](#핵심-기능-분석)
 - [기술 스택](#기술-스택)
 - [브라우저 지원](#브라우저-지원)
+- [테스트](#테스트)
 - [알려진 제한사항 및 개선 방향](#알려진-제한사항-및-개선-방향)
 
 ---
 
 ## 개요
 
-요리 중 손이 지저분해도 화면을 터치하지 않고 요리를 진행할 수 있도록 설계된 **음성 제어 레시피 앱**입니다. 브라우저 내장 Web Speech API(TTS + 음성 인식)를 사용해 별도 서버 없이 동작합니다.
+요리 중 손이 지저분해도 화면을 터치하지 않고 요리를 진행할 수 있도록 설계된 **음성 제어 레시피 앱**입니다. 브라우저 내장 Web Speech API(TTS + 음성 인식)를 사용해 별도 서버 없이 동작하며, PWA로 홈 화면에 추가해 오프라인에서도 사용할 수 있습니다.
 
 ### 핵심 플로우
 
@@ -35,6 +36,8 @@
 |---|---|
 | 아이디 | `chef` |
 | 비밀번호 | `1234` |
+
+직접 **회원가입**으로 새 계정을 만들 수도 있습니다.
 
 ---
 
@@ -57,8 +60,15 @@ npm run dev
 ### 빌드
 
 ```bash
-npm run build     # dist/ 폴더에 빌드
-npm run preview   # 빌드 결과 미리보기
+npm run build     # dist/ 폴더에 빌드 (PWA 포함)
+npm run preview   # 빌드 결과 미리보기 (PWA 동작 확인)
+```
+
+### 테스트
+
+```bash
+npm test          # vitest 전체 실행
+npm run test:ui   # vitest UI 대화형 실행
 ```
 
 ---
@@ -67,16 +77,23 @@ npm run preview   # 빌드 결과 미리보기
 
 ```
 cooking/
-├── index.html                    # Vite 진입점
+├── index.html                    # Vite 진입점 (PWA meta 포함)
 ├── package.json
-├── vite.config.js
+├── vite.config.js                # Vite + vite-plugin-pwa + vitest 설정
 ├── tailwind.config.js
 ├── postcss.config.js
+│
+├── public/
+│   ├── icon-192.svg              # PWA 아이콘
+│   └── icon-512.svg              # PWA 아이콘 (maskable)
 │
 └── src/
     ├── main.jsx                  # React 마운트, HashRouter 감싸기
     ├── App.jsx                   # 라우트 정의, 인증 가드
     ├── index.css                 # Tailwind + 커스텀 애니메이션
+    │
+    ├── test/
+    │   └── setup.js              # @testing-library/jest-dom 설정
     │
     ├── data/                     # 초기 시드 데이터 (JSON)
     │   ├── recipes.json          # 기본 레시피 16개 (한식·일식·중식·양식)
@@ -97,24 +114,29 @@ cooking/
     │
     ├── services/                 # 순수 함수 레이어 (UI 의존 없음)
     │   ├── storageAdapter.js     # localStorage 래퍼 (Supabase 교체 준비)
-    │   ├── auth.js               # 로그인·로그아웃·즐겨찾기 토글 (bcrypt)
+    │   ├── auth.js               # 로그인·회원가입·로그아웃·즐겨찾기 (bcrypt)
     │   ├── recipeStore.js        # 레시피 CRUD + 버전 마이그레이션
-    │   ├── tts.js                # Web Speech Synthesis 래퍼
-    │   └── speech.js             # Web Speech Recognition 래퍼
+    │   ├── tts.js                # Web Speech Synthesis 래퍼 (설정 반영)
+    │   ├── speech.js             # Web Speech Recognition 래퍼
+    │   └── __tests__/
+    │       ├── auth.test.js      # auth 서비스 단위 테스트
+    │       └── recipeStore.test.js # recipeStore 단위 테스트
     │
     ├── components/               # 재사용 UI 컴포넌트
-    │   ├── NavBar.jsx            # 상단 네비게이션
-    │   ├── RecipeCard.jsx        # 레시피 카드 (즐겨찾기 버튼 포함)
+    │   ├── NavBar.jsx            # 상단 네비게이션 (설정 링크 포함)
+    │   ├── RecipeCard.jsx        # 레시피 카드 (이미지·즐겨찾기 버튼 포함)
     │   └── TagBadge.jsx          # 태그 배지
     │
     └── pages/                    # 라우트별 페이지 컴포넌트
-        ├── LoginPage.jsx
+        ├── LoginPage.jsx         # 로그인 (회원가입 링크 포함)
+        ├── SignupPage.jsx        # 회원가입
         ├── HomePage.jsx          # 레시피 목록 + 검색 + 태그 필터
-        ├── RecipeDetailPage.jsx  # 재료, 단계 (타이머 표시), 요리 시작 버튼
+        ├── RecipeDetailPage.jsx  # 재료, 단계 (이미지·타이머 표시), 요리 시작
         ├── CookingModePage.jsx   # ★ 핵심: 음성 제어 + 단계별 타이머 요리 모드
-        ├── CreateRecipePage.jsx  # 레시피 생성 / 수정 (단계별 타이머 설정)
+        ├── CreateRecipePage.jsx  # 레시피 생성 / 수정 (이미지 업로드·타이머 설정)
         ├── MyRecipesPage.jsx     # 내가 만든 레시피
-        └── FavoritesPage.jsx     # 즐겨찾기 레시피
+        ├── FavoritesPage.jsx     # 즐겨찾기 (검색·정렬·태그 필터)
+        └── SettingsPage.jsx      # TTS 음성 설정
 ```
 
 ---
@@ -151,6 +173,8 @@ cooking/
 | 즐겨찾기 | `useRecipeStore.favoriteIds` (Zustand) | RecipeCard 단독 갱신, tick 패턴 불필요 |
 | 요리 모드 진행 상태 | `useCookingReducer` (useReducer) | 상태 전이 로직을 선언적으로 분리 |
 | 단계별 타이머 | `useState` + `useRef` (interval) | 요리 모드 내 독립 카운트다운 |
+| TTS 설정 | `localStorage` (직접 읽기) | speak() 호출마다 최신 설정 반영 |
+| 즐겨찾기 필터·정렬 | `useState` (로컬) | 페이지 내 일시적 상태 — 저장 불필요 |
 
 ### 인증 흐름 (`AuthContext`)
 
@@ -265,6 +289,7 @@ if (!stored || storedVersion < RECIPE_VERSION) {
   "title": "김치볶음밥",
   "category": "한식",
   "description": "고소하고 매콤한 한국식 볶음밥",
+  "imageBase64": null,
   "ingredients": ["밥 1공기", "김치 1/2컵", "..."],
   "steps": [
     {
@@ -296,6 +321,8 @@ if (!stored || storedVersion < RECIPE_VERSION) {
 
 `step.timerSeconds` — 해당 단계에서 타이머가 필요한 초 수. `null`이면 타이머 없음.
 
+`imageBase64` — 대표 이미지의 base64 Data URL. `null`이면 색상 플레이스홀더 표시. 최대 2MB.
+
 ### User
 
 ```json
@@ -314,6 +341,18 @@ if (!stored || storedVersion < RECIPE_VERSION) {
 
 즐겨찾기는 `User.favorites` 배열에 레시피 ID를 저장합니다. 레시피 자체를 복사하지 않아 레시피 수정 시 즐겨찾기에도 자동 반영됩니다.
 
+### TTS 설정
+
+```json
+{
+  "rate": 0.92,
+  "pitch": 1.0,
+  "voiceURI": null
+}
+```
+
+`cooking_tts_settings` 키에 저장됩니다. `tts.js`의 `speak()`가 호출될 때마다 읽어 적용합니다. `voiceURI: null`이면 브라우저 기본 음성을 사용합니다.
+
 ### localStorage 키
 
 `src/constants/storageKeys.js`의 `KEYS` 객체로 한 곳에서 관리합니다.
@@ -326,6 +365,7 @@ if (!stored || storedVersion < RECIPE_VERSION) {
 | `cooking_recipes_migrations` | 마이그레이션 감사 로그 배열 |
 | `cooking_users` | 사용자 배열 (bcrypt 해시 비밀번호 + 즐겨찾기 포함) |
 | `cooking_session` | 현재 로그인 세션 `{ id, username, displayName }` |
+| `cooking_tts_settings` | TTS 설정 `{ rate, pitch, voiceURI }` |
 
 ### 서비스 함수 반환 형식
 
@@ -410,7 +450,7 @@ if (!stored || storedVersion < RECIPE_VERSION) {
 
 레시피 생성·수정 화면에서 각 단계에 타이머 초 수를 직접 입력할 수 있습니다.
 
-### 4. 인증 흐름
+### 4. 인증 흐름 (로그인 + 회원가입)
 
 ```
 앱 시작
@@ -427,11 +467,56 @@ if (!stored || storedVersion < RECIPE_VERSION) {
        ├→ 성공 → { data: session } → AuthContext.setUser() → Zustand store 즉시 초기화
        └→ 실패 → { error: '...' } → 에러 메시지 표시
 
+회원가입
+  └→ await auth.signup(username, password, displayName)
+       ├→ 중복 아이디 체크
+       ├→ bcrypt.hash() → 새 User 저장
+       └→ 성공 → 자동 로그인 후 홈으로 이동
+
 로그아웃
   └→ localStorage에서 session 제거
   └→ AuthContext.user = null → /login 리다이렉트
   └→ Zustand store 즐겨찾기 초기화
 ```
+
+### 5. TTS 설정
+
+`/settings` 페이지에서 TTS 음성을 커스터마이즈합니다. 변경은 즉시 `cooking_tts_settings`에 저장되어 다음 `speak()` 호출부터 반영됩니다.
+
+| 설정 | 범위 | 기본값 |
+|---|---|---|
+| 음성 속도 | 0.5× — 2.0× | 0.92× |
+| 음성 높낮이 | 0.5 — 2.0 | 1.0 |
+| 음성 선택 | 브라우저 제공 한국어 음성 목록 | 기본 음성 |
+
+### 6. 레시피 이미지
+
+레시피 생성·수정 시 이미지를 업로드할 수 있습니다.
+
+- 파일 선택 → FileReader로 base64 변환 → `imageBase64` 필드에 저장
+- **2MB 초과 시 업로드 차단** (base64 변환 전 체크)
+- RecipeCard 상단과 RecipeDetailPage 상단에 이미지 표시
+- 이미지가 없으면 기존 레이아웃 그대로 유지
+
+### 7. 즐겨찾기 필터·정렬
+
+즐겨찾기 페이지에서 다음 기능을 제공합니다.
+
+| 기능 | 내용 |
+|---|---|
+| 검색 | 레시피 제목 검색 |
+| 정렬 | 최근 추가순 (기본) / 이름 가나다순 / 조리 시간 짧은 순 |
+| 태그 필터 | 즐겨찾기 내 존재하는 태그만 표시, 다중 선택 가능 |
+
+필터·정렬 상태는 컴포넌트 로컬 `useState`로 관리 (localStorage 저장 없음).
+
+### 8. PWA
+
+`vite-plugin-pwa`로 빌드 시 자동 생성됩니다.
+
+- **오프라인 지원**: Workbox가 JS·CSS·HTML을 precache. localStorage 기반 데이터는 오프라인에서도 접근 가능.
+- **홈 화면 추가**: standalone 모드, `theme_color: #f59e0b` (amber-500)
+- **자동 업데이트**: `registerType: 'autoUpdate'` — 새 빌드 배포 시 백그라운드 업데이트
 
 ---
 
@@ -445,6 +530,8 @@ if (!stored || storedVersion < RECIPE_VERSION) {
 | 스타일링 | Tailwind CSS | 3.4 |
 | 전역 상태 | Zustand | 5.x |
 | 비밀번호 해싱 | bcryptjs | 2.x |
+| PWA | vite-plugin-pwa (Workbox) | 1.x |
+| 테스트 | Vitest + @testing-library/react | 4.x |
 | TTS | Web Speech Synthesis API | 브라우저 내장 |
 | 음성 인식 | Web Speech Recognition API | 브라우저 내장 |
 | 데이터 저장 | localStorage (storageAdapter 래퍼) | 브라우저 내장 |
@@ -460,9 +547,23 @@ if (!stored || storedVersion < RECIPE_VERSION) {
 |---|---|---|---|---|
 | TTS (SpeechSynthesis) | ✅ | ✅ | ✅ | ✅ |
 | 음성 인식 (SpeechRecognition) | ✅ | ✅ | ❌ | ❌ |
+| PWA 설치 | ✅ | ✅ | ⚠️ 제한적 | ✅ iOS 16.4+ |
 | 전체 앱 동작 | ✅ | ✅ | ⚠️ 버튼 폴백 | ⚠️ 버튼 폴백 |
 
 음성 인식이 지원되지 않는 브라우저에서는 화면 버튼으로 모든 단계를 제어할 수 있습니다.
+
+---
+
+## 테스트
+
+`src/services/__tests__/` 아래에 단위 테스트가 있습니다.
+
+| 파일 | 테스트 대상 | 케이스 |
+|---|---|---|
+| `auth.test.js` | `login`, `logout`, `getSession`, `toggleFavorite`, `signup` | 11개 |
+| `recipeStore.test.js` | `initRecipes`, `getRecipe`, `saveRecipe`, `deleteRecipe`, `getUserRecipes`, `getFavoriteRecipes` | 12개 |
+
+bcryptjs와 storageAdapter는 `vi.mock()`으로 대체합니다. 브라우저 API에 의존하는 `tts.js`, `speech.js`는 호출 여부만 mock으로 검증합니다.
 
 ---
 
@@ -472,24 +573,16 @@ if (!stored || storedVersion < RECIPE_VERSION) {
 
 | 항목 | 내용 |
 |---|---|
-| **다중 사용자** | 현재 1명의 기본 사용자만 포함. 회원가입 기능 없음 |
 | **데이터 동기화** | 기기 간 데이터 공유 불가 (localStorage 한계) |
-| **TTS 음질** | 브라우저 기본 음성 사용. 음성·속도 선택 불가 |
-| **오프라인** | Service Worker 미적용. 첫 로드 시 인터넷 필요 |
-| **이미지** | 레시피 이미지 없음 |
-
-### Phase 2 개선 방향
-
-- [ ] TTS 음성·속도 설정
-- [ ] 레시피 이미지 업로드
-- [ ] 즐겨찾기 내 정렬·필터
-- [ ] difficulty 필터 (easy / medium / hard)
-- [ ] 인분 수 조절 (servings 기반 재료 자동 계산)
-- [ ] PWA (오프라인 지원, 홈 화면 추가)
+| **이미지 저장** | base64를 localStorage에 저장 — 대용량 이미지가 많으면 용량 초과 위험 |
+| **TTS 음질** | 브라우저 기본 음성 품질에 의존 |
 
 ### Phase 3 개선 방향
 
 - [ ] Supabase / Firebase 연동 → storageAdapter만 교체하면 됩니다
+- [ ] 이미지를 Supabase Storage에 업로드 (base64 제거)
 - [ ] OAuth 로그인 (Google, Kakao)
 - [ ] 레시피 공유 (공개/비공개)
 - [ ] 커뮤니티 (댓글, 평점)
+- [ ] difficulty 필터 (easy / medium / hard)
+- [ ] 인분 수 조절 (servings 기반 재료 자동 계산)

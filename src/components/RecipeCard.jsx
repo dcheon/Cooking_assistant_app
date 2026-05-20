@@ -21,9 +21,17 @@ export default function RecipeCard({ recipe }) {
   return (
     <div
       onClick={() => navigate(`/recipe/${recipe.id}`)}
-      className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 cursor-pointer
-                 hover:shadow-md hover:border-amber-200 transition-all active:scale-[0.98] group"
+      className="bg-white rounded-2xl shadow-sm border border-gray-100 cursor-pointer
+                 hover:shadow-md hover:border-amber-200 transition-all active:scale-[0.98] group overflow-hidden"
     >
+      {recipe.imageBase64 ? (
+        <img
+          src={recipe.imageBase64}
+          alt={recipe.title}
+          className="w-full h-36 object-cover"
+        />
+      ) : null}
+      <div className={`${recipe.imageBase64 ? 'p-4' : 'p-5'}`}>
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-lg font-bold text-gray-800 group-hover:text-amber-700 transition-colors flex-1">
           {recipe.title}
@@ -57,6 +65,7 @@ export default function RecipeCard({ recipe }) {
             내 레시피
           </span>
         )}
+      </div>
       </div>
     </div>
   );

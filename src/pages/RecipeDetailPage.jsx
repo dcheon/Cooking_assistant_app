@@ -37,6 +37,15 @@ export default function RecipeDetailPage() {
 
   return (
     <div className="space-y-5">
+      {/* Hero image */}
+      {recipe.imageBase64 && (
+        <img
+          src={recipe.imageBase64}
+          alt={recipe.title}
+          className="w-full h-52 object-cover rounded-2xl shadow-sm"
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-start gap-3">
         <button onClick={() => navigate(-1)} className="text-2xl text-gray-400 hover:text-gray-700 transition mt-0.5">

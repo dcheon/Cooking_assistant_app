@@ -39,6 +39,8 @@ export default function NavBar() {
           + 만들기
         </Link>
 
+        <Link to="/settings" className={`text-lg ${active('/settings')}`} aria-label="설정">⚙️</Link>
+
         <div className="flex items-center gap-2 pl-2 border-l border-gray-100">
           <span className="text-sm text-gray-600 font-medium">{user?.displayName}</span>
           <button

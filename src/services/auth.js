@@ -113,3 +113,30 @@ export function getFavoriteIds(userId) {
   const user = _getUsers().find(u => u.id === userId);
   return { data: user?.favorites ?? [], error: null };
 }
+
+/**
+ * @param {string} username
+ * @param {string} password
+ * @param {string} displayName
+ * @returns {Promise<{data: Session|null, error: string|null}>}
+ */
+export async function signup(username, password, displayName) {
+  const users = _getUsers();
+  if (users.find(u => u.username === username)) {
+    return { data: null, error: '이미 사용 중인 아이디입니다.' };
+  }
+  const hash = await bcrypt.hash(password, 10);
+  const newUser = {
+    id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    username,
+    password: hash,
+    displayName,
+    email: '',
+    favorites: [],
+    createdAt: new Date().toISOString(),
+  };
+  _saveUsers([...users, newUser]);
+  const session = { id: newUser.id, username: newUser.username, displayName: newUser.displayName };
+  storageAdapter.set(KEYS.SESSION, session);
+  return { data: session, error: null };
+}

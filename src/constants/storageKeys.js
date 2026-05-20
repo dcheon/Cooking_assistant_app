@@ -5,4 +5,5 @@ export const KEYS = {
   RECIPES_MIG_LOG: 'cooking_recipes_migrations',
   USERS:           'cooking_users',
   SESSION:         'cooking_session',
+  TTS_SETTINGS:    'cooking_tts_settings',
 };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/auth';
 import { useAuth } from '../context/AuthContext';
 
@@ -76,9 +76,16 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400 mt-6 bg-gray-50 rounded-lg py-2.5">
+        <p className="text-center text-xs text-gray-400 mt-4 bg-gray-50 rounded-lg py-2.5">
           기본 계정: <span className="font-mono font-semibold text-gray-600">chef</span> /{' '}
           <span className="font-mono font-semibold text-gray-600">1234</span>
+        </p>
+
+        <p className="text-center text-sm text-gray-400 mt-4">
+          계정이 없으신가요?{' '}
+          <Link to="/signup" className="text-amber-600 font-semibold hover:underline">
+            회원가입
+          </Link>
         </p>
       </div>
     </div>
