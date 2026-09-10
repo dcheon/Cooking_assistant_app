@@ -201,7 +201,7 @@ from any static file server — `python -m http.server` included — with no rew
   ],
   "tags": ["korean", "spicy", "quick"],
   "difficulty": "easy",
-  "prepTime": 15,
+  "prepTime": 15,           // 단위: 분(minutes)
   "createdBy": null,
   "isPublic": true,
   "createdAt": "2026-01-01T00:00:00.000Z",
